@@ -4,6 +4,7 @@ import 'package:staff_performance_mapping/models/work_report_model.dart';
 import 'package:staff_performance_mapping/providers/auth_provider.dart';
 import 'package:staff_performance_mapping/services/database_service.dart';
 import 'package:staff_performance_mapping/screens/admin/user_details_screen.dart';
+import 'package:intl/intl.dart'; // this import for date formatting
 
 class AdminDashboard extends StatelessWidget {
   final DatabaseService _databaseService = DatabaseService();
@@ -57,7 +58,6 @@ class AdminDashboard extends StatelessWidget {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          // Trigger a rebuild of the StreamBuilder
                           (context as Element).markNeedsBuild();
                         },
                         child: const Text('Retry'),
@@ -74,20 +74,33 @@ class AdminDashboard extends StatelessWidget {
                 itemCount: reports.length,
                 itemBuilder: (context, index) {
                   final report = reports[index];
-                  return ListTile(
-                    title: Text(report.task),
-                    subtitle:
-                        Text('${report.location} - ${report.date.toString()}'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UserDetailsScreen(userId: report.userId),
-                        ),
-                      );
-                    },
+                  return Card(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: ListTile(
+                      title: Text(report.task),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(report.location),
+                          Text('${report.country}, ${report.city}'),
+                          Text(
+                              'Geo: ${report.geoLocation?.latitude}, ${report.geoLocation?.longitude}'),
+                          Text(DateFormat('yyyy-MM-dd HH:mm:ss')
+                              .format(report.date)),
+                        ],
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                UserDetailsScreen(userId: report.userId),
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               );

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:staff_performance_mapping/models/user_model.dart';
 import 'package:staff_performance_mapping/providers/auth_provider.dart';
-import 'package:staff_performance_mapping/widgets/custom_text_field.dart';
-import 'package:staff_performance_mapping/widgets/custom_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -34,100 +32,121 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            CustomTextField(
-              labelText: 'First Name',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your first name' : null,
-              onSaved: (value) => _user = _user.copyWith(firstName: value),
-            ),
-            CustomTextField(
-              labelText: 'Middle Name',
-              onSaved: (value) => _user = _user.copyWith(middleName: value),
-            ),
-            CustomTextField(
-              labelText: 'Surname',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your surname' : null,
-              onSaved: (value) => _user = _user.copyWith(surname: value),
-            ),
-            CustomTextField(
-              labelText: 'ID Number',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your ID number' : null,
-              onSaved: (value) => _user = _user.copyWith(idNumber: value),
-            ),
-            CustomTextField(
-              labelText: 'Phone Number',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your phone number' : null,
-              onSaved: (value) => _user = _user.copyWith(phoneNumber: value),
-            ),
-            CustomTextField(
-              labelText: 'Email',
-              validator: (value) => value!.isEmpty ? 'Enter an email' : null,
-              onSaved: (value) => _user = _user.copyWith(email: value),
-            ),
-            CustomTextField(
-              labelText: 'Department',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your department' : null,
-              onSaved: (value) => _user = _user.copyWith(department: value),
-            ),
-            CustomTextField(
-              labelText: 'County',
-              validator: (value) => value!.isEmpty ? 'Enter your county' : null,
-              onSaved: (value) => _user = _user.copyWith(county: value),
-            ),
-            CustomTextField(
-              labelText: 'Sub County',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your sub county' : null,
-              onSaved: (value) => _user = _user.copyWith(subCounty: value),
-            ),
-            CustomTextField(
-              labelText: 'Ward',
-              validator: (value) => value!.isEmpty ? 'Enter your ward' : null,
-              onSaved: (value) => _user = _user.copyWith(ward: value),
-            ),
-            CustomTextField(
-              labelText: 'Workstation',
-              validator: (value) =>
-                  value!.isEmpty ? 'Enter your workstation' : null,
-              onSaved: (value) => _user = _user.copyWith(workstation: value),
-            ),
-            CustomTextField(
-              labelText: 'Password',
-              obscureText: true,
-              validator: (value) =>
-                  value!.length < 6 ? 'Enter a password 6+ chars long' : null,
-              onSaved: (value) => _password = value!,
-            ),
-            const SizedBox(height: 24),
-            CustomButton(
-              text: 'Register',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  bool result = await authProvider.signUp(_user, _password);
-                  if (result) {
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to register')),
-                    );
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Register'),
+      ),
+      child: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              _buildCupertinoTextField(
+                placeholder: 'First Name',
+                onChanged: (value) => _user = _user.copyWith(firstName: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Middle Name',
+                onChanged: (value) => _user = _user.copyWith(middleName: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Surname',
+                onChanged: (value) => _user = _user.copyWith(surname: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'ID Number',
+                onChanged: (value) => _user = _user.copyWith(idNumber: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Phone Number',
+                keyboardType: TextInputType.phone,
+                onChanged: (value) =>
+                    _user = _user.copyWith(phoneNumber: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Email',
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => _user = _user.copyWith(email: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Department',
+                onChanged: (value) => _user = _user.copyWith(department: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'County',
+                onChanged: (value) => _user = _user.copyWith(county: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Sub County',
+                onChanged: (value) => _user = _user.copyWith(subCounty: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Ward',
+                onChanged: (value) => _user = _user.copyWith(ward: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Workstation',
+                onChanged: (value) =>
+                    _user = _user.copyWith(workstation: value),
+              ),
+              _buildCupertinoTextField(
+                placeholder: 'Password',
+                obscureText: true,
+                onChanged: (value) => _password = value,
+              ),
+              const SizedBox(height: 24),
+              CupertinoButton.filled(
+                child: const Text('Register'),
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    bool result = await authProvider.signUp(_user, _password);
+                    if (result) {
+                      Navigator.pop(context);
+                    } else {
+                      _showErrorDialog(context, 'Failed to register');
+                    }
                   }
-                }
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCupertinoTextField({
+    required String placeholder,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    required void Function(String) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: CupertinoTextField(
+        placeholder: placeholder,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        clearButtonMode: OverlayVisibilityMode.editing,
+        autocorrect: false,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('OK'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }

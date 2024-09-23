@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:staff_performance_mapping/models/work_report_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapViewScreen extends StatefulWidget {
   final WorkReportModel report;
@@ -8,24 +9,24 @@ class MapViewScreen extends StatefulWidget {
   const MapViewScreen({Key? key, required this.report}) : super(key: key);
 
   @override
-  _MapViewScreenState createState() => _MapViewScreenState();
+  State<MapViewScreen> createState() => _MapViewScreenState();
 }
 
 class _MapViewScreenState extends State<MapViewScreen> {
   GoogleMapController? mapController;
-  bool _isMapReady = false;
+  LatLng? reportLocation;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationData();
+    _initializeLocation();
   }
 
-  void _checkLocationData() {
-    print('Checking location data:');
-    print('GeoLocation: ${widget.report.geoLocation}');
-    print('Latitude: ${widget.report.geoLocation?.latitude}');
-    print('Longitude: ${widget.report.geoLocation?.longitude}');
+  void _initializeLocation() {
+    if (widget.report.geoLocation != null) {
+      GeoPoint geoPoint = widget.report.geoLocation!;
+      reportLocation = LatLng(geoPoint.latitude, geoPoint.longitude);
+    }
   }
 
   @override
@@ -37,47 +38,24 @@ class _MapViewScreenState extends State<MapViewScreen> {
   }
 
   Widget _buildBody() {
-    if (widget.report.geoLocation == null) {
-      return _buildErrorWidget('Error: GeoLocation is null.');
+    if (reportLocation == null) {
+      return _buildErrorWidget('Error: Invalid location data.');
     }
 
-    final double? lat = widget.report.geoLocation?.latitude;
-    final double? lng = widget.report.geoLocation?.longitude;
-
-    if (lat == null || lng == null) {
-      return _buildErrorWidget('Error: Invalid latitude or longitude.');
-    }
-
-    return FutureBuilder<bool>(
-      future: Future.delayed(const Duration(milliseconds: 500), () => true),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return _buildErrorWidget('Error initializing map: ${snapshot.error}');
-        }
-        return _buildMap(LatLng(lat, lng));
-      },
-    );
-  }
-
-  Widget _buildMap(LatLng reportLocation) {
     return GoogleMap(
       onMapCreated: (GoogleMapController controller) {
         setState(() {
           mapController = controller;
-          _isMapReady = true;
         });
       },
       initialCameraPosition: CameraPosition(
-        target: reportLocation,
+        target: reportLocation!,
         zoom: 15,
       ),
       markers: {
         Marker(
           markerId: const MarkerId('reportLocation'),
-          position: reportLocation,
+          position: reportLocation!,
           infoWindow: InfoWindow(
             title: widget.report.task,
             snippet: widget.report.location,
