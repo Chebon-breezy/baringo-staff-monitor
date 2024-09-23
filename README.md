@@ -106,6 +106,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 For any queries or further information, please contact:
 
-Brian Chebon - [mailto:brianlchebon@gmail.com]
+Brian Chebon - [brianlchebon@gmail.com]
 
 Project Link: [https://github.com/Chebon-breezy/baringo-staff-monitor](https://github.com/Chebon-breezy/baringo-staff-monitor)
