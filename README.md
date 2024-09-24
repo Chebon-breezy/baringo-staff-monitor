@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Baringo Staff Monitor is a comprehensive web-based application designed to enhance the tracking and management of staff performance within Baringo County. This tool provides a streamlined, efficient, and accountable method for monitoring the activities of staff members, particularly those working in the field.
+Baringo Staff Monitor is a comprehensive application designed to enhance the tracking and management of staff performance within Baringo County. This tool provides a streamlined, efficient, and accountable method for monitoring the activities of staff members, particularly those working in the field.
 
 **Live Demo:** [https://bcg-staff-app.web.app](https://bcg-staff-app.web.app)
 
