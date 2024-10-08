@@ -1,4 +1,3 @@
-// File: lib/widgets/custom_text_field.dart
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -8,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final int? maxLines;
   final String? initialValue;
+  final TextInputType? keyboardType; // Add this line
 
   CustomTextField({
     required this.labelText,
@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.maxLines = 1,
     this.initialValue,
+    this.keyboardType, // Add this line
   });
 
   @override
@@ -24,12 +25,13 @@ class CustomTextField extends StatelessWidget {
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: labelText,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
       obscureText: obscureText,
       validator: validator,
       onSaved: onSaved,
       maxLines: maxLines,
+      keyboardType: keyboardType, // Add this line
     );
   }
 }

@@ -16,7 +16,11 @@ class AuthProvider with ChangeNotifier {
   Future<bool> signUp(UserModel user, String password) async {
     try {
       final result = await _authService.signUp(user, password);
-      return result != null;
+      if (result != null) {
+        await _databaseService.createUser(user.copyWith(id: result.user!.uid));
+        return true;
+      }
+      return false;
     } catch (e) {
       print(e.toString());
       return false;

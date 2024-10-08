@@ -1,4 +1,3 @@
-// File: lib/services/location_service.dart
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -30,16 +29,20 @@ class LocationService {
   }
 
   Future<LocationInfo> getLocationInfo() async {
-    final response = await http.get(Uri.parse('https://ipapi.co/json/'));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return LocationInfo(
-        ip: data['ip'],
-        country: data['country_name'],
-        city: data['city'],
-      );
-    } else {
-      throw Exception('Failed to get location info');
+    try {
+      final response = await http.get(Uri.parse('https://ipapi.co/json/'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return LocationInfo(
+          ip: data['ip'],
+          country: data['country_name'],
+          city: data['city'],
+        );
+      } else {
+        throw Exception('Failed to get location info: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to get location info: $e');
     }
   }
 }

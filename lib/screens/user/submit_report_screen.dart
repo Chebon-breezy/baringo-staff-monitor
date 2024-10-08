@@ -73,6 +73,8 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                         ip: locationInfo.ip,
                         country: locationInfo.country,
                         city: locationInfo.city,
+                        department: '',
+                        subDepartment: '',
                       );
                       await _databaseService.submitWorkReport(report);
                       if (mounted) {

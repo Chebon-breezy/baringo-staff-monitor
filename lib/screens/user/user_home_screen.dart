@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:staff_performance_mapping/models/user_model.dart';
 import 'package:staff_performance_mapping/models/work_report_model.dart';
 import 'package:staff_performance_mapping/providers/auth_provider.dart';
-import 'package:staff_performance_mapping/screens/user/submit_report_screen.dart';
+import 'package:staff_performance_mapping/screens/user/report_router.dart';
 import 'package:staff_performance_mapping/services/database_service.dart';
 
 class UserHomeScreen extends StatelessWidget {
@@ -22,8 +22,7 @@ class UserHomeScreen extends StatelessWidget {
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
               await authProvider.signOut();
-              Navigator.of(context).pushReplacementNamed(
-                  '/login'); // Assuming you have a named route for the login screen
+              Navigator.of(context).pushReplacementNamed('/login');
             },
             tooltip: 'Logout',
           ),
@@ -62,6 +61,8 @@ class UserHomeScreen extends StatelessWidget {
                               style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 16),
                           Text('Department: ${user.department}'),
+                          if (user.subDepartment != null)
+                            Text('Sub-Department: ${user.subDepartment}'),
                           Text('County: ${user.county}'),
                           Text('Sub County: ${user.subCounty}'),
                           Text('Ward: ${user.ward}'),
@@ -111,7 +112,7 @@ class UserHomeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SubmitReportScreen()),
+            MaterialPageRoute(builder: (context) => ReportRouter()),
           );
         },
         tooltip: 'Submit Work Report',

@@ -7,6 +7,7 @@ class UserModel {
   final String phoneNumber;
   final String email;
   final String department;
+  final String? subDepartment; // New field
   final String county;
   final String subCounty;
   final String ward;
@@ -22,6 +23,7 @@ class UserModel {
     required this.phoneNumber,
     required this.email,
     required this.department,
+    this.subDepartment, // New optional field
     required this.county,
     required this.subCounty,
     required this.ward,
@@ -39,6 +41,7 @@ class UserModel {
       phoneNumber: data['phoneNumber'] ?? '',
       email: data['email'] ?? '',
       department: data['department'] ?? '',
+      subDepartment: data['subDepartment'],
       county: data['county'] ?? '',
       subCounty: data['subCounty'] ?? '',
       ward: data['ward'] ?? '',
@@ -56,6 +59,7 @@ class UserModel {
       'phoneNumber': phoneNumber,
       'email': email,
       'department': department,
+      'subDepartment': subDepartment,
       'county': county,
       'subCounty': subCounty,
       'ward': ward,
@@ -73,6 +77,7 @@ class UserModel {
     String? phoneNumber,
     String? email,
     String? department,
+    String? subDepartment,
     String? county,
     String? subCounty,
     String? ward,
@@ -88,6 +93,7 @@ class UserModel {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
       department: department ?? this.department,
+      subDepartment: subDepartment ?? this.subDepartment,
       county: county ?? this.county,
       subCounty: subCounty ?? this.subCounty,
       ward: ward ?? this.ward,

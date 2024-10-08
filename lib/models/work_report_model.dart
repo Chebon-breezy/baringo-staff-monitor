@@ -10,6 +10,10 @@ class WorkReportModel {
   final String ip;
   final String country;
   final String city;
+  final String department;
+  final String subDepartment;
+  final String? imageUrl;
+  final Map<String, dynamic>? additionalData;
 
   WorkReportModel({
     required this.id,
@@ -21,6 +25,10 @@ class WorkReportModel {
     required this.ip,
     required this.country,
     required this.city,
+    required this.department,
+    required this.subDepartment,
+    this.imageUrl,
+    this.additionalData,
   });
 
   factory WorkReportModel.fromMap(Map<String, dynamic> data, String id) {
@@ -34,6 +42,10 @@ class WorkReportModel {
       ip: data['ip'] ?? '',
       country: data['country'] ?? '',
       city: data['city'] ?? '',
+      department: data['department'] ?? '',
+      subDepartment: data['subDepartment'] ?? '',
+      imageUrl: data['imageUrl'],
+      additionalData: data['additionalData'],
     );
   }
 
@@ -47,6 +59,10 @@ class WorkReportModel {
       'ip': ip,
       'country': country,
       'city': city,
+      'department': department,
+      'subDepartment': subDepartment,
+      'imageUrl': imageUrl,
+      'additionalData': additionalData,
     };
   }
 }
