@@ -1,0 +1,39 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bcg-staff-app",
+          "appId": "1:411536287353:android:270c04f4a70724a8c616a8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bcg-staff-app",
+          "configurations": {
+            "android": "1:411536287353:android:270c04f4a70724a8c616a8",
+            "ios": "1:411536287353:ios:af812f2716217731c616a8",
+            "macos": "1:411536287353:ios:af812f2716217731c616a8",
+            "web": "1:411536287353:web:210a3bb4ff9b0d83c616a8",
+            "windows": "1:411536287353:web:4eecdc8cec1373dbc616a8"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

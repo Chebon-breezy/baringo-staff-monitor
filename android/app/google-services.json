@@ -1,0 +1,155 @@
+{
+  "project_info": {
+    "project_number": "411536287353",
+    "firebase_url": "https://bcg-staff-app-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bcg-staff-app",
+    "storage_bucket": "bcg-staff-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411536287353:android:d9a9479801cda6a0c616a8",
+        "android_client_info": {
+          "package_name": "com.baringo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4roZSeJapCCa7aN3WyPz0qEqpl0YwkJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "411536287353-istfuuir9phfa5jroukg7q9ndj8n5ejk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.staffPerformanceMapping"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411536287353:android:707ea515c54d27c8c616a8",
+        "android_client_info": {
+          "package_name": "com.baringo.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4roZSeJapCCa7aN3WyPz0qEqpl0YwkJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "411536287353-istfuuir9phfa5jroukg7q9ndj8n5ejk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.staffPerformanceMapping"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411536287353:android:78f60944e3a193e8c616a8",
+        "android_client_info": {
+          "package_name": "com.baringo.staff"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4roZSeJapCCa7aN3WyPz0qEqpl0YwkJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "411536287353-istfuuir9phfa5jroukg7q9ndj8n5ejk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.staffPerformanceMapping"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411536287353:android:270c04f4a70724a8c616a8",
+        "android_client_info": {
+          "package_name": "stafbaringo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4roZSeJapCCa7aN3WyPz0qEqpl0YwkJQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411536287353-mk6o3j7r3o4o2dvlfodrt1u7ivcv53o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "411536287353-istfuuir9phfa5jroukg7q9ndj8n5ejk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.staffPerformanceMapping"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
