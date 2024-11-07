@@ -54,4 +54,13 @@ class AuthService {
   Stream<User?> get user {
     return _auth.authStateChanges();
   }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.toString());
+      throw Exception('Failed to send password reset email');
+    }
+  }
 }

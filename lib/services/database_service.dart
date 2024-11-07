@@ -22,8 +22,7 @@ class DatabaseService {
   Stream<List<UserModel>> getAllUsers() {
     return _firestore.collection('users').snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) =>
-              UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
           .toList();
     });
   }
@@ -31,8 +30,7 @@ class DatabaseService {
   Future<List<UserModel>> getAllUsersOnce() async {
     final snapshot = await _firestore.collection('users').get();
     return snapshot.docs
-        .map((doc) =>
-            UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .map((doc) => UserModel.fromMap(doc.data(), doc.id))
         .toList();
   }
 
@@ -44,7 +42,7 @@ class DatabaseService {
     try {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(userId).get();
-      return (userDoc.data() as Map<String, dynamic>)?['isAdmin'] == true;
+      return (userDoc.data() as Map<String, dynamic>)['isAdmin'] == true;
     } catch (e) {
       print('Error checking admin status: $e');
       return false;
@@ -161,5 +159,30 @@ class DatabaseService {
     return snapshot.docs
         .map((doc) => WorkReportModel.fromMap(doc.data(), doc.id))
         .toList();
+  }
+
+  // You might want to add a method to get users by ward or sub-county
+  Stream<List<UserModel>> getUsersByWard(String ward) {
+    return _firestore
+        .collection('users')
+        .where('ward', isEqualTo: ward)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  Stream<List<UserModel>> getUsersBySubCounty(String subCounty) {
+    return _firestore
+        .collection('users')
+        .where('subCounty', isEqualTo: subCounty)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
+    });
   }
 }

@@ -52,6 +52,15 @@ class AuthProvider with ChangeNotifier {
     return await _databaseService.getUserById(currentUser!.uid);
   }
 
+  Future<void> resetPassword(String email) async {
+    try {
+      await _authService.resetPassword(email);
+    } catch (e) {
+      print(e.toString());
+      throw Exception('Failed to send password reset email');
+    }
+  }
+
   Future<void> updateUserProfile(UserModel user) async {
     await _databaseService.updateUserProfile(user);
     notifyListeners();

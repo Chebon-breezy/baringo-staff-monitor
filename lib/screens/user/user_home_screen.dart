@@ -60,12 +60,12 @@ class UserHomeScreen extends StatelessWidget {
                           Text('Welcome, ${user.firstName} ${user.surname}!',
                               style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 16),
-                          Text('Department: ${user.department}'),
-                          if (user.subDepartment != null)
-                            Text('Sub-Department: ${user.subDepartment}'),
                           Text('County: ${user.county}'),
                           Text('Sub County: ${user.subCounty}'),
                           Text('Ward: ${user.ward}'),
+                          Text('Department: ${user.department}'),
+                          if (user.subDepartment != null)
+                            Text('Directorate: ${user.subDepartment}'),
                           Text('Workstation: ${user.workstation}'),
                         ],
                       ),

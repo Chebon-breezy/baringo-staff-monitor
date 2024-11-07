@@ -29,6 +29,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _password = '';
   String? _selectedDepartment;
   String? _selectedSubDepartment;
+  String? _selectedSubCounty;
+  String? _selectedWard;
 
   final List<String> _subCounties = [
     'Baringo Central',
@@ -39,6 +41,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'Mogotio',
     'Baringo North'
   ];
+
+  final Map<String, List<String>> _subCountyWards = {
+    'Baringo North': [
+      'Barwessa',
+      'Saimo Kipsaraman',
+      'Saimo Soi',
+      'Kabartonjo',
+      'Bartabwa'
+    ],
+    'Tiaty West': ['Tirioko', 'Kolowa', 'Ribkwo'],
+    'Tiaty East': ['Silale', 'Tangulbei', 'Loiyamorok', 'Churo/Amaya'],
+    'Mogotio': ['Mogotio', 'Emining', 'Kisanana'],
+    'Baringo South': ['Mukutani', 'Marigat', 'Mochongoi', 'Ilchamus'],
+    'Eldama Ravine': [
+      'Lembus',
+      'Ravine',
+      'Lembus Kwen',
+      'Koibatek',
+      'Lembus Perkerra',
+      'Mumberes/Majimazuri'
+    ],
+    'Baringo Central': [
+      'Kabarnet',
+      'Sacho',
+      'Tenges',
+      'Kapropita',
+      'Ewalel Chapchap'
+    ],
+  };
 
   final List<String> _departments = [
     'Agriculture, Livestock, and Fisheries Development',
@@ -126,6 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Sub-County'),
+                value: _selectedSubCounty,
                 items: _subCounties.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -134,12 +166,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
+                    _selectedSubCounty = value;
+                    _selectedWard = null;
                     _user = _user.copyWith(subCounty: value);
                   });
                 },
                 validator: (value) =>
                     value == null ? 'Select a sub-county' : null,
               ),
+              if (_selectedSubCounty != null)
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(labelText: 'Ward'),
+                  value: _selectedWard,
+                  items:
+                      _subCountyWards[_selectedSubCounty]!.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedWard = value;
+                      _user = _user.copyWith(ward: value);
+                    });
+                  },
+                  validator: (value) => value == null ? 'Select a ward' : null,
+                ),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Department'),
                 value: _selectedDepartment,
@@ -161,8 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               if (_selectedDepartment != null &&
                   _subDepartments.containsKey(_selectedDepartment))
                 DropdownButtonFormField<String>(
-                  decoration:
-                      const InputDecoration(labelText: 'Sub-Department'),
+                  decoration: const InputDecoration(labelText: 'Directorate'),
                   value: _selectedSubDepartment,
                   items: _subDepartments[_selectedDepartment]!
                       .map((String subDepartment) {
@@ -177,12 +229,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'Select a sub-department' : null,
+                      value == null ? 'Select a Directorate' : null,
                 ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Ward'),
-                onSaved: (value) => _user = _user.copyWith(ward: value),
-              ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Workstation'),
                 onSaved: (value) => _user = _user.copyWith(workstation: value),

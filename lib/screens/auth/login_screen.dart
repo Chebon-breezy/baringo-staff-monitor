@@ -20,6 +20,64 @@ class _LoginScreenState extends State<LoginScreen> {
   String _email = '';
   String _password = '';
 
+  void _showForgotPasswordDialog(
+      BuildContext context, AuthProvider authProvider) {
+    String resetEmail = '';
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Reset Password'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Enter your email address to reset your password.'),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  labelText: 'Email',
+                  onSaved: (value) => resetEmail = value!,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter an email' : null,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Reset Password'),
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  formKey.currentState!.save();
+                  try {
+                    await authProvider.resetPassword(resetEmail);
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Password reset email sent. Check your inbox.')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to send reset email: $e')),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -45,6 +103,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (value) =>
                     value!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 onSaved: (value) => _password = value!,
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () =>
+                      _showForgotPasswordDialog(context, authProvider),
+                  child: const Text('Forgot Password?'),
+                ),
               ),
               const SizedBox(height: 24),
               CustomButton(
