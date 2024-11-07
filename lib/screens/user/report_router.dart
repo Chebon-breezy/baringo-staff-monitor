@@ -37,7 +37,11 @@ class ReportRouter extends StatelessWidget {
 
         switch (user.department) {
           case 'Agriculture, Livestock, and Fisheries Development':
-            return AgricultureReportScreen(userId: user.id);
+            return AgricultureReportScreen(
+              userId: user.id,
+              subDepartment:
+                  user.subDepartment ?? 'Directorate Of Crop Production',
+            );
           case 'Water, Irrigation, Environment, Natural Resources, and Mining':
             return WaterReportScreen(
                 userId: user.id, subDepartment: user.subDepartment ?? '');

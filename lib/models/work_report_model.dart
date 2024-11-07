@@ -65,4 +65,16 @@ class WorkReportModel {
       'additionalData': additionalData,
     };
   }
+
+  // Helper methods to get attendance data
+  int get maleAttendance =>
+      (additionalData?['maleAttendance'] as num?)?.toInt() ?? 0;
+  int get femaleAttendance =>
+      (additionalData?['femaleAttendance'] as num?)?.toInt() ?? 0;
+  int get youthAttendance =>
+      (additionalData?['youthAttendance'] as num?)?.toInt() ?? 0;
+  int get totalAttendance =>
+      maleAttendance + femaleAttendance + youthAttendance;
+  String get description => additionalData?['description'] as String? ?? '';
+  String get remarks => additionalData?['remarks'] as String? ?? '';
 }

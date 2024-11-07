@@ -10,14 +10,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AgricultureReportScreen extends StatefulWidget {
   final String userId;
+  final String subDepartment;
 
   const AgricultureReportScreen({
     Key? key,
     required this.userId,
+    required this.subDepartment,
   }) : super(key: key);
 
   @override
-  State<AgricultureReportScreen> createState() =>
+  _AgricultureReportScreenState createState() =>
       _AgricultureReportScreenState();
 }
 
@@ -26,172 +28,194 @@ class _AgricultureReportScreenState extends State<AgricultureReportScreen> {
   final DatabaseService _databaseService = DatabaseService();
   final LocationService _locationService = LocationService();
 
-  String _selectedSubDepartment = '';
-  List<String> _selectedTasks = [];
-  String _otherTask = '';
-  String _manualLocation = '';
+  String _selectedActivityType = '';
+  String _venue = '';
+  String _description = '';
+  int _maleAttendance = 0;
+  int _femaleAttendance = 0;
+  int _youthAttendance = 0;
+  String _remarks = '';
   String? _imagePath;
+  Position? _currentPosition;
   bool _isLoading = false;
 
-  final Map<String, List<String>> _subDepartmentTasks = {
-    'Directorate Of Crop Production': [
-      'Extension Services',
-      'Soil and Water Conservation',
-      'Irrigation Projects',
-      'Crop Research and Development',
-    ],
-    'Directorate Of Fisheries Development': [
-      'Aquaculture Development',
-      'Fisheries Extension Services',
-      'Fisheries Market Linkages',
-      'Fish Stocking',
-    ],
-    'Directorate Of Livestock Production': [
-      'Animal Husbandry Programs',
-      'Pasture and Fodder Development',
-      'Livestock Markets',
-      'Dairy Development',
-    ],
-    'Directorate of Veterinary Services': [
-      'Animal Health Services',
-      'Artificial Insemination Programs',
-      'Livestock Disease Surveillance',
-      'Meat Inspection',
-    ],
-  };
+  // Activity types based on department reports
+  final List<String> _activityTypes = [
+    'Individual farm visits',
+    'Group visits',
+    'Trainings',
+    'Barazas',
+    'Input Distribution',
+    'Field days/Exhibitions',
+    'Demonstration',
+    'Crop damage assessment',
+    'Information desk',
+    'Market survey',
+    'Plant clinics',
+    'Staff meeting',
+    'Farm business planning',
+    'Soil sampling',
+    'Distribution of inputs',
+    'Project site visits',
+    'Laying of soil conservation structures'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() => _isLoading = true);
+    try {
+      Position position = await _locationService.getCurrentPosition();
+      setState(() {
+        _currentPosition = position;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to get location: $e')),
+        );
+      }
+    }
+  }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      setState(() {
-        _imagePath = image.path;
-      });
+      setState(() => _imagePath = image.path);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Agriculture Report')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Sub-Department'),
-                value: _selectedSubDepartment.isNotEmpty
-                    ? _selectedSubDepartment
-                    : null,
-                items: _subDepartmentTasks.keys.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedSubDepartment = newValue!;
-                    _selectedTasks = [];
-                  });
-                },
-                validator: (value) =>
-                    value == null ? 'Please select a sub-department' : null,
-              ),
-              const SizedBox(height: 16),
-              if (_selectedSubDepartment.isNotEmpty) ...[
-                Text('Select Tasks:',
-                    style: Theme.of(context).textTheme.titleMedium),
-                ...(_subDepartmentTasks[_selectedSubDepartment] ?? [])
-                    .map((task) {
-                  return CheckboxListTile(
-                    title: Text(task),
-                    value: _selectedTasks.contains(task),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          _selectedTasks.add(task);
-                        } else {
-                          _selectedTasks.remove(task);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
-                CustomTextField(
-                  labelText: 'Other Task',
-                  onSaved: (value) => _otherTask = value ?? '',
+      appBar: AppBar(title: const Text('Submit Activity Report')),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      decoration:
+                          const InputDecoration(labelText: 'Activity Type'),
+                      value: _selectedActivityType.isNotEmpty
+                          ? _selectedActivityType
+                          : null,
+                      items: _activityTypes.map((type) {
+                        return DropdownMenuItem(value: type, child: Text(type));
+                      }).toList(),
+                      onChanged: (value) =>
+                          setState(() => _selectedActivityType = value!),
+                      validator: (value) => value == null
+                          ? 'Please select an activity type'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      labelText: 'Venue',
+                      validator: (value) =>
+                          value!.isEmpty ? 'Venue is required' : null,
+                      onSaved: (value) => _venue = value!,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      labelText: 'Activity Description',
+                      maxLines: 3,
+                      validator: (value) =>
+                          value!.isEmpty ? 'Description is required' : null,
+                      onSaved: (value) => _description = value!,
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      labelText: 'Male Attendance',
+                      keyboardType: TextInputType.number,
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                      onSaved: (value) => _maleAttendance = int.parse(value!),
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      labelText: 'Female Attendance',
+                      keyboardType: TextInputType.number,
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                      onSaved: (value) => _femaleAttendance = int.parse(value!),
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      labelText: 'Youth Attendance',
+                      keyboardType: TextInputType.number,
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
+                      onSaved: (value) => _youthAttendance = int.parse(value!),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      labelText: 'Remarks/Outcomes',
+                      maxLines: 2,
+                      onSaved: (value) => _remarks = value ?? '',
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: _pickImage,
+                      icon: const Icon(Icons.camera_alt),
+                      label: Text(
+                          _imagePath == null ? 'Take Photo' : 'Retake Photo'),
+                    ),
+                    if (_imagePath != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Photo captured: $_imagePath'),
+                      ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      text: 'Submit Report',
+                      onPressed: _submitReport,
+                    ),
+                  ],
                 ),
-              ],
-              const SizedBox(height: 16),
-              CustomTextField(
-                labelText: 'Location',
-                onSaved: (value) => _manualLocation = value ?? '',
-                validator: (value) =>
-                    value!.isEmpty ? 'Location is required' : null,
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text(
-                    _imagePath == null ? 'Take Picture' : 'Retake Picture'),
-              ),
-              if (_imagePath != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Image captured: $_imagePath'),
-                ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: 'Submit Report',
-                onPressed: _submitReport,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
   Future<void> _submitReport() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _currentPosition != null) {
       _formKey.currentState!.save();
 
-      setState(() {
-        _isLoading = true;
-      });
-
       try {
-        Position position = await _locationService.getCurrentPosition();
         final locationInfo = await _locationService.getLocationInfo();
-
-        final tasks = [..._selectedTasks];
-        if (_otherTask.isNotEmpty) {
-          tasks.add(_otherTask);
-        }
-
-        final Map<String, dynamic> additionalData = {
-          'selectedTasks': _selectedTasks,
-          'otherTask': _otherTask,
-        };
 
         final report = WorkReportModel(
           id: '',
           userId: widget.userId,
-          task: tasks.join(', '),
-          location: _manualLocation,
+          task: _selectedActivityType,
+          location: _venue,
+          geoLocation:
+              GeoPoint(_currentPosition!.latitude, _currentPosition!.longitude),
           date: DateTime.now(),
           department: 'Agriculture, Livestock, and Fisheries Development',
-          subDepartment: _selectedSubDepartment,
+          subDepartment: widget.subDepartment,
           imageUrl: _imagePath,
           ip: locationInfo.ip,
           country: locationInfo.country,
           city: locationInfo.city,
-          geoLocation: GeoPoint(position.latitude, position.longitude),
-          additionalData: additionalData,
+          additionalData: {
+            'description': _description,
+            'maleAttendance': _maleAttendance,
+            'femaleAttendance': _femaleAttendance,
+            'youthAttendance': _youthAttendance,
+            'totalAttendance':
+                _maleAttendance + _femaleAttendance + _youthAttendance,
+            'remarks': _remarks,
+          },
         );
 
         await _databaseService.submitWorkReport(report);
@@ -208,13 +232,12 @@ class _AgricultureReportScreenState extends State<AgricultureReportScreen> {
             SnackBar(content: Text('Failed to submit report: $e')),
           );
         }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
       }
+    } else if (_currentPosition == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Waiting for location data. Please try again.')),
+      );
     }
   }
 }

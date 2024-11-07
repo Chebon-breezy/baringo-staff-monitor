@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final String? initialValue;
   final TextInputType? keyboardType; // Add this line
+  final TextEditingController? controller;
+  final void Function(String)? onChanged;
 
   CustomTextField({
     required this.labelText,
@@ -17,6 +19,8 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.initialValue,
     this.keyboardType, // Add this line
+    this.controller,
+    this.onChanged,
   });
 
   @override
