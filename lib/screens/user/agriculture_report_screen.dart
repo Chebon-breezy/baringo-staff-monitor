@@ -39,7 +39,6 @@ class _AgricultureReportScreenState extends State<AgricultureReportScreen> {
   Position? _currentPosition;
   bool _isLoading = false;
 
-  // Activity types based on department reports
   final List<String> _activityTypes = [
     'Individual farm visits',
     'Group visits',
@@ -95,9 +94,15 @@ class _AgricultureReportScreenState extends State<AgricultureReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Submit Activity Report')),
+      backgroundColor: const Color(0xFF1E1E1E),
+      appBar: AppBar(
+        title: const Text('Submit Activity Report'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF00BFA5)))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Form(
@@ -105,84 +110,153 @@ class _AgricultureReportScreenState extends State<AgricultureReportScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DropdownButtonFormField<String>(
-                      decoration:
-                          const InputDecoration(labelText: 'Activity Type'),
-                      value: _selectedActivityType.isNotEmpty
-                          ? _selectedActivityType
-                          : null,
-                      items: _activityTypes.map((type) {
-                        return DropdownMenuItem(value: type, child: Text(type));
-                      }).toList(),
-                      onChanged: (value) =>
-                          setState(() => _selectedActivityType = value!),
-                      validator: (value) => value == null
-                          ? 'Please select an activity type'
-                          : null,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2D2D2D),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Activity Type',
+                          labelStyle: TextStyle(color: Color(0xFF00BFA5)),
+                          border: InputBorder.none,
+                        ),
+                        dropdownColor: const Color(0xFF2D2D2D),
+                        style: const TextStyle(color: Colors.white),
+                        value: _selectedActivityType.isNotEmpty
+                            ? _selectedActivityType
+                            : null,
+                        items: _activityTypes.map((type) {
+                          return DropdownMenuItem(
+                            value: type,
+                            child: Text(type),
+                          );
+                        }).toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedActivityType = value!),
+                        validator: (value) => value == null
+                            ? 'Please select an activity type'
+                            : null,
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
-                      labelText: 'Venue',
+                    _buildStyledTextField(
+                      'Venue',
+                      onSaved: (value) => _venue = value!,
                       validator: (value) =>
                           value!.isEmpty ? 'Venue is required' : null,
-                      onSaved: (value) => _venue = value!,
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
-                      labelText: 'Activity Description',
+                    _buildStyledTextField(
+                      'Activity Description',
                       maxLines: 3,
+                      onSaved: (value) => _description = value!,
                       validator: (value) =>
                           value!.isEmpty ? 'Description is required' : null,
-                      onSaved: (value) => _description = value!,
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
-                      labelText: 'Male Attendance',
+                    _buildStyledTextField(
+                      'Male Attendance',
                       keyboardType: TextInputType.number,
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
                       onSaved: (value) => _maleAttendance = int.parse(value!),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      labelText: 'Female Attendance',
+                    _buildStyledTextField(
+                      'Female Attendance',
                       keyboardType: TextInputType.number,
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
                       onSaved: (value) => _femaleAttendance = int.parse(value!),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 8),
-                    CustomTextField(
-                      labelText: 'Youth Attendance',
+                    _buildStyledTextField(
+                      'Total Attendance',
                       keyboardType: TextInputType.number,
-                      validator: (value) => value!.isEmpty ? 'Required' : null,
                       onSaved: (value) => _youthAttendance = int.parse(value!),
+                      validator: (value) => value!.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 16),
-                    CustomTextField(
-                      labelText: 'Remarks/Outcomes',
+                    _buildStyledTextField(
+                      'Remarks/Outcomes',
                       maxLines: 2,
                       onSaved: (value) => _remarks = value ?? '',
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: _pickImage,
-                      icon: const Icon(Icons.camera_alt),
-                      label: Text(
-                          _imagePath == null ? 'Take Photo' : 'Retake Photo'),
+                    const SizedBox(height: 24),
+                    Container(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton.icon(
+                        onPressed: _pickImage,
+                        icon: const Icon(Icons.camera_alt),
+                        label: Text(
+                            _imagePath == null ? 'Take Photo' : 'Retake Photo'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2D2D2D),
+                          foregroundColor: const Color(0xFF00BFA5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
                     ),
                     if (_imagePath != null)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('Photo captured: $_imagePath'),
+                        child: Text(
+                          'Photo captured: $_imagePath',
+                          style: const TextStyle(color: Colors.white70),
+                        ),
                       ),
                     const SizedBox(height: 24),
-                    CustomButton(
-                      text: 'Submit Report',
-                      onPressed: _submitReport,
+                    Container(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _submitReport,
+                        child: const Text('Submit Report'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00BFA5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildStyledTextField(
+    String label, {
+    int? maxLines,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    void Function(String?)? onSaved,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF2D2D2D),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: TextFormField(
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Color(0xFF00BFA5)),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        maxLines: maxLines ?? 1,
+        keyboardType: keyboardType,
+        validator: validator,
+        onSaved: onSaved,
+        cursorColor: const Color(0xFF00BFA5),
+      ),
     );
   }
 

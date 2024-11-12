@@ -17,6 +17,7 @@ class UserHomeScreen extends StatelessWidget {
       List<WorkReportModel> reports, UserModel user) async {
     final pdf = pw.Document();
 
+    // PDF generation logic remains the same
     pdf.addPage(
       pw.MultiPage(
         header: (context) => pw.Column(
@@ -47,15 +48,6 @@ class UserHomeScreen extends StatelessWidget {
                 .toList(),
           ),
         ],
-        footer: (context) => pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.end,
-          children: [
-            pw.Text(
-              'Page ${context.pageNumber} of ${context.pagesCount}',
-              style: const pw.TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
       ),
     );
 
@@ -71,8 +63,14 @@ class UserHomeScreen extends StatelessWidget {
     final databaseService = DatabaseService();
 
     return Scaffold(
+      backgroundColor: const Color(0xFF1C1E26), // Dark background
       appBar: AppBar(
-        title: const Text('User Home'),
+        backgroundColor: const Color(0xFF1C1E26),
+        elevation: 0,
+        title: const Text(
+          'BCG Staff(Monitoring and Mapping Tool)',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           StreamBuilder<List<WorkReportModel>>(
             stream: authProvider.currentUser != null
@@ -81,7 +79,7 @@ class UserHomeScreen extends StatelessWidget {
                 : Stream.value([]),
             builder: (context, reportsSnapshot) {
               return IconButton(
-                icon: const Icon(Icons.print),
+                icon: const Icon(Icons.print, color: Color(0xFF00BFA5)),
                 onPressed: reportsSnapshot.hasData &&
                         reportsSnapshot.data!.isNotEmpty
                     ? () async {
@@ -97,7 +95,7 @@ class UserHomeScreen extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app, color: Color(0xFF00BFA5)),
             onPressed: () async {
               await authProvider.signOut();
               Navigator.of(context).pushReplacementNamed('/login');
@@ -107,177 +105,184 @@ class UserHomeScreen extends StatelessWidget {
         ],
       ),
       body: authProvider.currentUser == null
-          ? const Center(child: Text('Not authenticated. Please log in.'))
+          ? Center(
+              child: Text(
+                'Not authenticated. Please log in.',
+                style: TextStyle(color: Colors.white.withOpacity(0.7)),
+              ),
+            )
           : FutureBuilder<UserModel?>(
               future:
                   databaseService.getUserById(authProvider.currentUser!.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF00BFA5),
+                    ),
+                  );
                 }
+
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                    ),
+                  );
                 }
+
                 final user = snapshot.data;
                 if (user == null) {
-                  return const Center(
-                      child: Text(
-                          'User data not found. Please try logging out and logging in again.'));
+                  return Center(
+                    child: Text(
+                      'User data not found. Please try logging out and logging in again.',
+                      style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                    ),
+                  );
                 }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Welcome, ${user.firstName} ${user.surname}!',
-                              style: Theme.of(context).textTheme.headlineSmall),
-                          const SizedBox(height: 16),
-                          Text('County: ${user.county}'),
-                          Text('Sub County: ${user.subCounty}'),
-                          Text('Ward: ${user.ward}'),
-                          Text('Department: ${user.department}'),
-                          if (user.subDepartment != null)
-                            Text('Directorate: ${user.subDepartment}'),
-                          Text('Workstation: ${user.workstation}'),
-                        ],
+
+                return Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome, ${user.firstName} ${user.surname}!',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: StreamBuilder<List<WorkReportModel>>(
-                        stream: databaseService.getUserWorkReports(user.id),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          }
-                          final reports = snapshot.data ?? [];
-                          if (reports.isEmpty) {
-                            return const Center(
-                                child: Text('No reports submitted yet.'));
-                          }
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  dividerColor: Colors.grey[300],
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2D37),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoRow('County', user.county),
+                            _buildInfoRow('Sub County', user.subCounty),
+                            _buildInfoRow('Ward', user.ward),
+                            _buildInfoRow('Department', user.department),
+                            if (user.subDepartment != null)
+                              _buildInfoRow('Directorate', user.subDepartment!),
+                            _buildInfoRow('Workstation', user.workstation),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Recent Reports',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: StreamBuilder<List<WorkReportModel>>(
+                          stream: databaseService.getUserWorkReports(user.id),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFF00BFA5),
                                 ),
-                                child: Table(
-                                  border: TableBorder.all(
-                                    color: Colors.grey[300]!,
-                                    width: 1,
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                  'Error: ${snapshot.error}',
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.7)),
+                                ),
+                              );
+                            }
+
+                            final reports = snapshot.data ?? [];
+                            if (reports.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  'No reports submitted yet.',
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.7)),
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              itemCount: reports.length,
+                              itemBuilder: (context, index) {
+                                final report = reports[index];
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2A2D37),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  defaultColumnWidth:
-                                      const IntrinsicColumnWidth(),
-                                  children: [
-                                    TableRow(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              report.task,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              report.location,
+                                              style: TextStyle(
+                                                color: Colors.white
+                                                    .withOpacity(0.7),
+                                              ),
+                                            ),
+                                            Text(
+                                              DateFormat('yyyy-MM-dd HH:mm')
+                                                  .format(report.date),
+                                              style: TextStyle(
+                                                color: Colors.white
+                                                    .withOpacity(0.5),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      children: const [
-                                        TableCell(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('Task',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('Location',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('Date & Time',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text('Status',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    ...reports
-                                        .map((report) => TableRow(
-                                              children: [
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text(report.task),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child:
-                                                        Text(report.location),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text(DateFormat(
-                                                            'yyyy-MM-dd HH:mm')
-                                                        .format(report.date)),
-                                                  ),
-                                                ),
-                                                TableCell(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: const Icon(
-                                                        Icons.check_circle,
-                                                        color: Colors.green),
-                                                  ),
-                                                ),
-                                              ],
-                                            ))
-                                        .toList(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xFF00BFA5),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF00BFA5),
         onPressed: () {
           Navigator.push(
             context,
@@ -286,6 +291,34 @@ class UserHomeScreen extends StatelessWidget {
         },
         tooltip: 'Submit Work Report',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.5),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
