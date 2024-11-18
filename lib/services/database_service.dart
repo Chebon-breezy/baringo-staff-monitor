@@ -34,19 +34,100 @@ class DatabaseService {
         .toList();
   }
 
+  // New method to get users by designation
+  Stream<List<UserModel>> getUsersByDesignation(String designation) {
+    return _firestore
+        .collection('users')
+        .where('designation', isEqualTo: designation)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  // New method to get users by department and designation
+  Stream<List<UserModel>> getUsersByDepartmentAndDesignation(
+      String department, String designation) {
+    return _firestore
+        .collection('users')
+        .where('department', isEqualTo: department)
+        .where('designation', isEqualTo: designation)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  // New method to get all unique designations
+  Future<List<String>> getAllDesignations() async {
+    final snapshot = await _firestore.collection('users').get();
+    Set<String> designations = {};
+
+    for (var doc in snapshot.docs) {
+      String designation = doc.data()['designation'] ?? 'Unknown';
+      if (designation.isNotEmpty) {
+        designations.add(designation);
+      }
+    }
+
+    return designations.toList()..sort();
+  }
+
   Future<void> updateUserProfile(UserModel user) async {
     await _firestore.collection('users').doc(user.id).update(user.toMap());
   }
 
+  // Updated method to include designation in admin checks
   Future<bool> isUserAdmin(String userId) async {
     try {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(userId).get();
-      return (userDoc.data() as Map<String, dynamic>)['isAdmin'] == true;
+      final userData = userDoc.data() as Map<String, dynamic>;
+      // Check both isAdmin flag and if designation contains "admin" (case insensitive)
+      return userData['isAdmin'] == true ||
+          (userData['designation'] ?? '').toLowerCase().contains('admin');
     } catch (e) {
       print('Error checking admin status: $e');
       return false;
     }
+  }
+
+  // Advanced Analytics Methods
+
+  // New method to get staff count by designation
+  Future<Map<String, int>> getStaffCountByDesignation() async {
+    final snapshot = await _firestore.collection('users').get();
+    Map<String, int> designationCounts = {};
+
+    for (var doc in snapshot.docs) {
+      String designation = doc.data()['designation'] ?? 'Unknown';
+      designationCounts[designation] =
+          (designationCounts[designation] ?? 0) + 1;
+    }
+
+    return designationCounts;
+  }
+
+  // New method to get staff count by department and designation
+  Future<Map<String, Map<String, int>>>
+      getStaffCountByDepartmentAndDesignation() async {
+    final snapshot = await _firestore.collection('users').get();
+    Map<String, Map<String, int>> departmentDesignationCounts = {};
+
+    for (var doc in snapshot.docs) {
+      String department = doc.data()['department'] ?? 'Unknown';
+      String designation = doc.data()['designation'] ?? 'Unknown';
+
+      departmentDesignationCounts[department] ??= {};
+      departmentDesignationCounts[department]![designation] =
+          (departmentDesignationCounts[department]![designation] ?? 0) + 1;
+    }
+
+    return departmentDesignationCounts;
   }
 
   // Work report-related methods
@@ -161,27 +242,51 @@ class DatabaseService {
         .toList();
   }
 
-  // You might want to add a method to get users by ward or sub-county
-  Stream<List<UserModel>> getUsersByWard(String ward) {
-    return _firestore
-        .collection('users')
-        .where('ward', isEqualTo: ward)
-        .snapshots()
-        .map((snapshot) {
+// Method to get users by ward with optional designation filter
+  Stream<List<UserModel>> getUsersByWard(String ward, {String? designation}) {
+    Query query = _firestore.collection('users').where('ward', isEqualTo: ward);
+
+    if (designation != null) {
+      query = query.where('designation', isEqualTo: designation);
+    }
+
+    return query.snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .map((doc) =>
+              UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     });
   }
 
-  Stream<List<UserModel>> getUsersBySubCounty(String subCounty) {
+  // Method to get users by sub-county with optional designation filter
+  Stream<List<UserModel>> getUsersBySubCounty(String subCounty,
+      {String? designation}) {
+    Query query =
+        _firestore.collection('users').where('subCounty', isEqualTo: subCounty);
+
+    if (designation != null) {
+      query = query.where('designation', isEqualTo: designation);
+    }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) =>
+              UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+    });
+  }
+
+  // New method to get performance reports by designation
+  Stream<List<WorkReportModel>> getWorkReportsByDesignation(
+      String designation) {
     return _firestore
-        .collection('users')
-        .where('subCounty', isEqualTo: subCounty)
+        .collection('work_reports')
+        .where('userDesignation', isEqualTo: designation)
+        .orderBy('date', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+          .map((doc) => WorkReportModel.fromMap(doc.data(), doc.id))
           .toList();
     });
   }

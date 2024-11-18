@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: const Color(0xFF1C1E2A),
+          backgroundColor: Colors.white,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text(
                   'Reset Password',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1B5E20), // Dark green
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -50,20 +50,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 Form(
                   key: formKey,
                   child: TextFormField(
-                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: const TextStyle(color: Color(0xFF00BFA5)),
+                      labelStyle: const TextStyle(color: Color(0xFF1B5E20)),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF2E3140)),
+                        borderSide: const BorderSide(color: Color(0xFF4CAF50)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF00BFA5)),
+                        borderSide: const BorderSide(color: Color(0xFF1B5E20)),
                       ),
-                      filled: true,
-                      fillColor: const Color(0xFF2E3140),
                     ),
                     onSaved: (value) => resetEmail = value ?? '',
                     validator: (value) =>
@@ -77,14 +74,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                       child: const Text(
                         'Cancel',
-                        style: TextStyle(color: Color(0xFF00BFA5)),
+                        style: TextStyle(color: Color(0xFF1976D2)), // Blue
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00BFA5),
+                        backgroundColor: const Color(0xFF1B5E20), // Dark green
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -103,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Password reset email sent'),
-                                backgroundColor: Color(0xFF00BFA5),
+                                backgroundColor: Color(0xFF4CAF50),
                               ),
                             );
                           } catch (e) {
@@ -132,200 +129,257 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1E2A),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 60),
-                  // Logo or App Name
-                  const Text(
-                    'BCG Staff(Monitoring and Mapping Tool)',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Welcome back! Please enter your details and Login',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-                  // Email Field
-                  TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: const TextStyle(color: Color(0xFF00BFA5)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF2E3140)),
+        child: Row(
+          children: [
+            // Left Panel - Only visible on larger screens
+            Expanded(
+              flex: 2,
+              child: Container(
+                color: const Color(0xFF1B5E20), // Dark green background
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // County Logo placeholder
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF00BFA5)),
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF2E3140),
-                    ),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Enter an email' : null,
-                    onSaved: (value) => _email = value!,
-                  ),
-                  const SizedBox(height: 24),
-                  // Password Field
-                  TextFormField(
-                    style: const TextStyle(color: Colors.white),
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: const TextStyle(color: Color(0xFF00BFA5)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF2E3140)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF00BFA5)),
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF2E3140),
-                    ),
-                    validator: (value) =>
-                        value!.length < 6 ? 'Password must be 6+ chars' : null,
-                    onSaved: (value) => _password = value!,
-                  ),
-                  const SizedBox(height: 16),
-                  // Remember Me & Forgot Password
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Switch(
-                            value: _rememberMe,
-                            onChanged: (value) {
-                              setState(() {
-                                _rememberMe = value;
-                              });
-                            },
-                            activeColor: const Color(0xFF00BFA5),
+                      child: const Center(
+                        child: Text(
+                          'BCG',
+                          style: TextStyle(
+                            color: Color(0xFF1B5E20),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const Text(
-                            'Remember me',
-                            style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Baringo County\nGovernment',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Staff Performance Monitoring System',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Right Panel - Login Form
+            Expanded(
+              flex: 3,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Welcome Back',
+                        style: TextStyle(
+                          color: Color(0xFF1B5E20),
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Please sign in to continue',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: const TextStyle(color: Color(0xFF1B5E20)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF4CAF50)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF1B5E20)),
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.email, color: Color(0xFF1B5E20)),
+                        ),
+                        validator: (value) =>
+                            value!.isEmpty ? 'Enter an email' : null,
+                        onSaved: (value) => _email = value!,
+                      ),
+                      const SizedBox(height: 24),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: const TextStyle(color: Color(0xFF1B5E20)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF4CAF50)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Color(0xFF1B5E20)),
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.lock, color: Color(0xFF1B5E20)),
+                        ),
+                        validator: (value) => value!.length < 6
+                            ? 'Password must be 6+ chars'
+                            : null,
+                        onSaved: (value) => _password = value!,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Switch(
+                                value: _rememberMe,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _rememberMe = value;
+                                  });
+                                },
+                                activeColor: const Color(0xFF1B5E20),
+                              ),
+                              const Text(
+                                'Remember me',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          TextButton(
+                            onPressed: () => _showForgotPasswordDialog(
+                                context, authProvider),
+                            child: const Text(
+                              'Forgot password?',
+                              style:
+                                  TextStyle(color: Color(0xFF1976D2)), // Blue
+                            ),
                           ),
                         ],
                       ),
-                      TextButton(
-                        onPressed: () =>
-                            _showForgotPasswordDialog(context, authProvider),
-                        child: const Text(
-                          'Forgot password?',
-                          style: TextStyle(color: Color(0xFF00BFA5)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  // Login Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00BFA5),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          bool result =
-                              await authProvider.signIn(_email, _password);
-                          if (result) {
-                            final user = await authProvider.getCurrentUser();
-                            if (user != null) {
-                              if (user.department.isEmpty) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        DepartmentSelectionScreen(user: user),
-                                  ),
-                                );
+                      const SizedBox(height: 32),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1B5E20),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              bool result =
+                                  await authProvider.signIn(_email, _password);
+                              if (result) {
+                                final user =
+                                    await authProvider.getCurrentUser();
+                                if (user != null) {
+                                  if (user.department.isEmpty) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            DepartmentSelectionScreen(
+                                                user: user),
+                                      ),
+                                    );
+                                  } else {
+                                    bool isAdmin = await authProvider.isAdmin();
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => isAdmin
+                                            ? const AdminDashboard()
+                                            : const UserHomeScreen(),
+                                      ),
+                                    );
+                                  }
+                                }
                               } else {
-                                bool isAdmin = await authProvider.isAdmin();
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => isAdmin
-                                        ? const AdminDashboard()
-                                        : const UserHomeScreen(),
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Failed to sign in'),
+                                    backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                             }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Failed to sign in'),
-                                backgroundColor: Colors.red,
+                          },
+                          child: const Text(
+                            'Sign In',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
                               ),
                             );
-                          }
-                        }
-                      },
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Register Link
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text.rich(
-                        TextSpan(
-                          text: "Don't have an account? ",
-                          style: TextStyle(color: Colors.grey),
-                          children: [
+                          },
+                          child: const Text.rich(
                             TextSpan(
-                              text: 'Sign Up',
-                              style: TextStyle(color: Color(0xFF00BFA5)),
+                              text: "Don't have an account? ",
+                              style: TextStyle(color: Colors.grey),
+                              children: [
+                                TextSpan(
+                                  text: 'Sign Up',
+                                  style: TextStyle(
+                                      color: Color(0xFF1976D2)), // Blue
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

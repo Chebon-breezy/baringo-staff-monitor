@@ -24,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     phoneNumber: '',
     email: '',
     department: '',
+    designation: '',
     county: 'Baringo',
     subCounty: '',
     ward: '',
@@ -122,11 +123,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // Update the color scheme to match Baringo County colors
+  final Color primaryGreen = const Color(0xFF2E7D32); // Dark green for headers
+  final Color primaryBlue =
+      const Color(0xFF1565C0); // Blue for buttons and links
+  final Color backgroundColor = Colors.white;
+  final Color textColor = const Color(0xFF333333);
+
   InputDecoration _buildInputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: Colors.grey[700]),
-      prefixIcon: Icon(icon, color: Colors.blue[700]),
+      labelStyle: TextStyle(color: textColor),
+      prefixIcon: Icon(icon, color: primaryGreen),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.grey),
@@ -137,10 +145,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.blue.shade700, width: 2),
+        borderSide: BorderSide(color: primaryGreen, width: 2),
       ),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: backgroundColor,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
@@ -153,10 +161,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: primaryGreen,
             ),
           ),
           const SizedBox(height: 8),
@@ -164,7 +172,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             width: 100,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.blue.shade700,
+              color: primaryGreen,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -244,14 +252,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         elevation: 0,
         title: const Text('Staff Registration'),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: primaryGreen,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade700, Colors.blue.shade50],
+            colors: [primaryGreen, backgroundColor],
             stops: const [0.0, 0.3],
           ),
         ),
@@ -415,6 +423,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               value == null ? 'Required' : null,
                         ),
                       const SizedBox(height: 16),
+                      // Add the new Designation field
+                      TextFormField(
+                        decoration: _buildInputDecoration(
+                            'Designation*', Icons.assignment_ind),
+                        validator: (value) =>
+                            value!.isEmpty ? 'Required' : null,
+                        onSaved: (value) =>
+                            _user = _user.copyWith(designation: value),
+                      ),
+                      const SizedBox(height: 16),
                       TextFormField(
                         decoration:
                             _buildInputDecoration('Workstation*', Icons.work),
@@ -424,17 +442,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _user = _user.copyWith(workstation: value),
                       ),
 
+                      // Keep your existing Security section with updated colors
                       _buildSectionHeader('Security'),
                       TextFormField(
                         decoration: InputDecoration(
                           labelText: 'Password*',
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: primaryGreen),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: Colors.blue.shade700,
+                              color: primaryGreen,
                             ),
                             onPressed: () {
                               setState(() {
@@ -451,11 +470,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                                color: Colors.blue.shade700, width: 2),
+                            borderSide:
+                                BorderSide(color: primaryGreen, width: 2),
                           ),
                           filled: true,
-                          fillColor: Colors.grey.shade50,
+                          fillColor: backgroundColor,
                         ),
                         obscureText: _obscurePassword,
                         validator: (value) {
@@ -469,13 +488,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Registration button with loading state
+                      // Registration button with updated colors
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         height: 56,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: primaryGreen,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -504,9 +523,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ],
                                 )
-                              : const Text(
+                              : Text(
                                   'Register',
                                   style: TextStyle(
+                                    color: backgroundColor,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -516,7 +536,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Optional: Add a "Required fields" note
                       Text(
                         '* Required fields',
                         style: TextStyle(
@@ -528,22 +547,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Login link
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                            ),
+                            style: TextStyle(color: textColor),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context),
                             child: Text(
                               'Login',
                               style: TextStyle(
-                                color: Colors.blue.shade700,
+                                color: primaryBlue,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

@@ -111,7 +111,8 @@ class AdminDashboardState extends State<AdminDashboard>
     pdf.addPage(
       pw.MultiPage(
         header: (context) => pw.Text(
-          'Staff Performance Mapping - Tasks List',
+          'Baringo County Government'
+          'Reports and Staff Performance Mapping', //Tasks List
           style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
         ),
         build: (context) => [
@@ -145,6 +146,9 @@ class AdminDashboardState extends State<AdminDashboard>
           mainAxisAlignment: pw.MainAxisAlignment.end,
           children: [
             pw.Text(
+              'Name:...................................'
+              'Date:..................'
+              'signature:.............'
               'Page ${context.pageNumber} of ${context.pagesCount}',
               style: const pw.TextStyle(fontSize: 12),
             ),
